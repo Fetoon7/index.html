@@ -113,7 +113,7 @@
                   
                   // تحديث الـ HTML بالبيانات الجديدة
                   document.getElementById("status-text").innerText = data.status || "Stable";
-                  document.getElementById("time-text").innerText = data.date || data["date"] || "لا يزال جاري التحميل...";
+                  document.getElementById("time-text").innerText = data.date || data["date"] || "لايوجد تاريخ";
                   console.log("وصلت بيانات جديدة: ", data.status);
               } else {
                   document.getElementById("status-text").innerText = "لا توجد بيانات";
