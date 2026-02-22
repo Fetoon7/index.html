@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmotiView AI</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        /* كود التنسيق CSS */
+        body {
+            background-color: #0a192f; /* كحلي غامق */
+            color: #e6f1ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #448AFF;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 85%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #448AFF;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #8892b0;
+            margin-bottom: 25px;
+        }
+
+        .status-card {
+            background: rgba(68, 138, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px dashed rgba(68, 138, 255, 0.3);
+        }
+
+        .card-label {
+            font-size: 18px;
+            color: #448AFF;
+        }
+
+        #status-text {
+            display: block;
+            font-size: 55px;
+            font-weight: bold;
+            color: #00d2ff; 
+            margin: 15px 0;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+
+        .date-text {
+            font-size: 14px;
+            color: #8892b0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>EmotiView AI Dashboard</h1>
+    <p class="subtitle">نظام تحليل المشاعر اللحظي</p>
+    
+    <div class="status-card">
+        <div class="card-label">الحالة الحالية من الكاميرا</div>
+        <span id="status-text">جاري الاتصال...</span>
+        <div class="date-text">وقت الالتقاط: <span id="time-text">--:--</span></div>
+    </div>
+</div>
+
+<script>
+    // إعدادات Firebase الخاصة بكِ
+    const firebaseConfig = {
+        apiKey: "AIzaSyDCOk60Eb8jc7_H8SI7yEfhGQPDHe3lbQs",
+        authDomain: "smartmirrorproject-a5b61.firebaseapp.com",
+        projectId: "smartmirrorproject-a5b61",
+        storageBucket: "smartmirrorproject-a5b61.firebasestorage.app",
+        messagingSenderId: "961163417219",
+        appId: "1:961163417219:web:8434ac8a2b74ff1adc6db6"
+    };
+
+    // تهيئة Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // وظيفة مراقبة البيانات لحظياً
+    function startListening() {
+        db.collection("moods")
+          .onSnapshot((querySnapshot) => {
+              if (!querySnapshot.empty) {
+                  // نأخذ آخر وثيقة مضافة (الأحدث)
+                  const docs = querySnapshot.docs;
+                  const lastDoc = docs[docs.length - 1]; 
+                  const data = lastDoc.data();
+                  
+                  // تحديث الـ HTML بالبيانات الجديدة
+                  document.getElementById("status-text").innerText = data.status || "Stable";
+                  document.getElementById("time-text").innerText = data.date || data["date"] || "لا يزال جاري التحميل...";
+                  console.log("وصلت بيانات جديدة: ", data.status);
+              } else {
+                  document.getElementById("status-text").innerText = "لا توجد بيانات";
+              }
+          }, (error) => {
+              console.error("خطأ في الاتصال: ", error);
+              document.getElementById("status-text").innerText = "خطأ اتصال";
+          });
+    }
+
+    // تشغيل الوظيفة
+    startListening();
+</script>
+
+</body>
+</html>
