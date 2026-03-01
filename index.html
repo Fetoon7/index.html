@@ -79,7 +79,7 @@
     <div style="color: #448AFF; font-size: 13px; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid rgba(68, 138, 255, 0.2); padding-bottom: 5px;">سجل الحساب الحالي (Database)</div>
     <div style="display: flex; flex-direction: column; gap: 5px;">
         <div style="color: #ffffff; font-size: 15px;">الاسم: <span style="color: #448AFF;">ادخل الاسم</span></div>
-        <div style="color: #b0bec5; font-size: 13px;">الإيميل: feto@example.com</div>
+        <div style="color: #b0bec5; font-size: 13px;">الإيميل: test@example.com</div>
     </div>
 </div>
 
@@ -112,28 +112,29 @@
     }
     const db = firebase.firestore();
 
-    // وظيفة مراقبة البيانات لحظياً
     function startListening() {
-        db.collection("moods")
-          .onSnapshot((querySnapshot) => {
-              if (!querySnapshot.empty) {
-                  // نأخذ آخر وثيقة مضافة (الأحدث)
-                  const docs = querySnapshot.docs;
-                  const lastDoc = docs[docs.length - 1]; 
-                  const data = lastDoc.data();
-                  
-                  // تحديث الـ HTML بالبيانات الجديدة
-                  document.getElementById("status-text").innerText = data.status || "Stable";
-                  document.getElementById("time-text").innerText = data.date || data["date"] || "لايوجد تاريخ";
-                  console.log("وصلت بيانات جديدة: ", data.status);
-              } else {
-                  document.getElementById("status-text").innerText = "لا توجد بيانات";
-              }
-          }, (error) => {
-              console.error("خطأ في الاتصال: ", error);
-              document.getElementById("status-text").innerText = "خطأ اتصال";
-          });
-    }
+  // تم تغيير اسم الجدول من moods إلى mood_history
+  db.collection("mood_history")
+    .onSnapshot((querySnapshot) => {
+      if (!querySnapshot.empty) {
+        // نأخذ آخر وثيقة مضافة (الأحدث)
+        const docs = querySnapshot.docs;
+        const lastDoc = docs[docs.length - 1];
+        const data = lastDoc.data();
+
+        // تحديث النصوص في الواجهة بناءً على المسميات الجديدة سمول
+        document.getElementById("status-text").innerText = data.emotion || "مستقر";
+        document.getElementById("time-text").innerText = data.timestamp || "لا يوجد تاريخ";
+        
+        console.log("وصلت بيانات جديدة: ", data.emotion);
+      } else {
+        document.getElementById("status-text").innerText = "لا توجد بيانات";
+      }
+    }, (error) => {
+      console.error("خطأ في الاتصال: ", error);
+      document.getElementById("status-text").innerText = "خطأ اتصال";
+    });
+}
 
     // تشغيل الوظيفة
     startListening();
