@@ -136,14 +136,20 @@
       document.getElementById("status-text").innerText = "خطأ اتصال";
     });
 }
-// كود جلب بيانات المستخدم وتحديثها تلقائياً
+// كود جلب بيانات المستخدم وتحديثها في الموقع
 db.collection("user").doc("user_01").onSnapshot((doc) => {
     if (doc.exists) {
         const userData = doc.data();
-        // تحديث الاسم في الموقع
-        document.getElementById("username-display").innerText = userData.username;
-        // تحديث الإيميل في الموقع
-        document.getElementById("user-email").innerText = userData.email;
+        
+        // جلب الاسم (بيجرب بمسافة وبدون مسافة عشان يضمن النتيجة)
+        const nameValue = userData.username || userData["username "] || "مستخدم";
+        const emailValue = userData.email || userData["email "] || "لا يوجد إيميل";
+
+        // تحديث النصوص في الموقع
+        document.getElementById("username-display").innerText = nameValue;
+        document.getElementById("user-email").innerText = emailValue;
+        
+        console.log("تم جلب الاسم بنجاح:", nameValue);
     }
 });
 
