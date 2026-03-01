@@ -136,6 +136,16 @@
       document.getElementById("status-text").innerText = "خطأ اتصال";
     });
 }
+// كود جلب بيانات المستخدم وتحديثها تلقائياً
+db.collection("user").doc("user_01").onSnapshot((doc) => {
+    if (doc.exists) {
+        const userData = doc.data();
+        // تحديث الاسم في الموقع
+        document.getElementById("username-display").innerText = userData.username;
+        // تحديث الإيميل في الموقع
+        document.getElementById("user-email").innerText = userData.email;
+    }
+});
 
     // تشغيل الوظيفة
     startListening();
